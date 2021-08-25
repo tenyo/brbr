@@ -127,7 +127,7 @@ func Start() {
 		log.Printf("failed to save address: %v", err)
 	}
 
-	log.Printf("Onion service listening at %v.onion", onion.ID)
+	log.Printf("Onion service listening at %v", onion.ID)
 
 	grpc := grpc.NewServer()
 	pb.RegisterMessengerServer(grpc, &messengerServer{ID: onion.ID})
