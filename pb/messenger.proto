@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/tenyo/brbr/pb";
+
+service Messenger {
+    rpc SendMetagram (Metagram) returns (Metagram) {}
+}
+
+message Metagram {
+    string id = 1;
+    google.protobuf.Timestamp created_at = 2;
+    string from = 3;
+    string content = 4;
+}
+
