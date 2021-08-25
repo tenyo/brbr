@@ -11,10 +11,13 @@ builds:
     id: build-arm64
     env:
       - CGO_ENABLED=1
+      - CC=aarch64-linux-gnu-gcc
     goos:
       - linux
     goarch:
       - arm64
+    ignore:
+      - goarch: 386
 
 release:
   prerelease: auto
