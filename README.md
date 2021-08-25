@@ -1,6 +1,7 @@
 # brbr
 
-`brbr` is a simple command line tool for sending and receiving messages (here called metagrams) over the Tor network. When sending a metagram to another brbr instance, it establishes an anonymous encrypted connection (as any Onion v3 hidden service) and works behind firewall/NAT without requiring any port opening/forwarding.
+`brbr` is a simple command line tool for sending and receiving messages (here called metagrams) over the Tor network. When sending a metagram to another brbr instance, it establishes an anonymous encrypted connection (as v3 onion hidden service). It works behind firewall/NAT without requiring any port opening/forwarding.
+
 Currently brbr only works on Linux - it has a built-in Tor server (thanks to https://github.com/ipsn/go-libtor) so the compiled binary has no external dependencies.
 
 ## Usage
@@ -12,9 +13,9 @@ From the directory where you have `brbr` run the following command to start list
 ./brbr start
 ```
 
-To send a metagram to someone else you can just pipe your message to the `brbr send` command:
+To send a metagram to someone you can just pipe your message to the `brbr send` command:
 ```
-echo "do you copy?" | ./brbr send <address id>
+echo "do you copy?" | ./brbr send <address_id>
 ```
 
 ### Address id's
@@ -36,12 +37,12 @@ $ 2021/08/24 14:21:45 Loading private key
 2021/08/24 14:21:45 All received metagrams will be saved in metagrams/
 2021/08/24 14:21:45 Initializing Tor
 2021/08/24 14:21:46 Starting onion service, please wait ...
-2021/08/24 14:21:52 Onion service listening at qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad.onion
+2021/08/24 14:21:52 Onion service listening at qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad
 ```
 
-When starting a server for the first time, it will generate a new private key and save it as `ed25519_private_key`. The public address is based on that key, so as long as you don't change or delete it, you will keep the same address. In our case we got `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad`.
-Any metagrams that we receive will be saved in a `metagrams` dir, organized by the sender address.
+When starting a server for the first time, it will generate a new private key and save it as `ed25519_private_key`. The public address is based on that key, so as long as you don't change or delete the private key, you will keep the same address. In our case we got `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad`.
 
+Any metagrams that we receive will be saved as separate files under a `metagrams` dir, organized by the sender address.
 
 #### Send a metagram
 
@@ -73,9 +74,15 @@ At the same time on the server receiving the metagram we would see a log message
 
 #### Read received metagrams
 
-Received metagrams are organized on the file system under `metagrams`/`<sender address>`/<metagram id>`
+Received metagrams are organized on the file system under `metagrams`/`<sender_address>`/`<metagram_id>`
 
-The one from the above example has been saved on the receiving server in `metagrams/qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad/796c465f-a5c1-4175-930f-391598788570`, where `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad` is the sender address and `796c465f-a5c1-4175-930f-391598788570` is the id of the metagram.
+The one from the above example has been saved on the receiving server in
+```
+metagrams/
+  qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad/
+    796c465f-a5c1-4175-930f-391598788570
+```
+where `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad` is the sender address and `796c465f-a5c1-4175-930f-391598788570` is the id of the metagram.
 
 This is what is looks like:
 ```
@@ -89,7 +96,7 @@ Does this even work?
 
 Note that a sender "from" address is not required and could be just "anonymous"
 
-#### Stop the brbr server
+#### Stop brbr server
 
 ```
 $ ./brbr stop
