@@ -3,10 +3,6 @@ builds:
       - CGO_ENABLED=1
     goos:
       - linux
-    goarch:
-      - amd64
 release:
   prerelease: auto
   name_template: "{{.ProjectName}}-v{{.Version}}"
-checksum:
-  name_template: 'checksums.txt'
