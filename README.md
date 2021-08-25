@@ -4,6 +4,8 @@
 
 Currently brbr only works on Linux - it has a built-in Tor server (thanks to https://github.com/ipsn/go-libtor) so the compiled binary has no external dependencies.
 
+Download the latest release from https://github.com/tenyo/brbr/releases/latest
+
 ## Usage
 
 ### Quickstart
