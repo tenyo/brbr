@@ -16,8 +16,6 @@ builds:
       - linux
     goarch:
       - arm64
-    ignore:
-      - goarch: 386
 
 release:
   prerelease: auto
