@@ -26,7 +26,7 @@ jobs:
           go-version: 1.17
       -
         name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@fix-platform
+        uses: goreleaser/goreleaser-action@master
         with:
           distribution: goreleaser
           version: latest
