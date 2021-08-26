@@ -26,7 +26,7 @@ jobs:
           go-version: 1.17
       -
         name: Run GoReleaser
-        uses: actions/github-script@v4
+        - uses: actions/github-script@v4
           with:
             script: |
               const os = require('os')
