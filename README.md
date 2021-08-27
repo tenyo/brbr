@@ -25,18 +25,24 @@ echo "do you copy?" | ./brbr send <address_id>
 The address format used by brbr is the standard v3 onion address, which has 56 alpha-numeric characters and looks like this: `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad`.
 When you first start your brbr server it will automatically generate an address (which will not change later if you restart the server). Anyone who knows that address can send you a metagram, as long as your server is running.
 
+### Output directory
+
+By default brbr will write all of its files (including temp files, received metagrams and key) under $HOME/.brbr.
+Received metagrams will be under ~/.brbr/metagrams/received
+
 ### Examples
 
 #### Start brbr server in the background
 
 ```
 $ ./brbr start
+Using data dir: /home/me/.brbr
 Starting in background ...
 brbr started and listening in the background (pid 30029)
 $ 2021/08/24 14:21:45 Loading private key
 2021/08/24 14:21:45 existing key not found, generating new private key
-2021/08/24 14:21:45 Creating output directory metagrams
-2021/08/24 14:21:45 All received metagrams will be saved in metagrams/
+2021/08/24 14:21:45 Creating metagrams output directory /home/me/.brbr/metagrams
+2021/08/24 14:21:45 All received metagrams will be saved in /home/me/.brbr/metagrams/received
 2021/08/24 14:21:45 Initializing Tor
 2021/08/24 14:21:46 Starting onion service, please wait ...
 2021/08/24 14:21:52 Onion service listening at qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad
@@ -44,7 +50,7 @@ $ 2021/08/24 14:21:45 Loading private key
 
 When starting a server for the first time, it will generate a new private key and save it as `ed25519_private_key`. The public address is based on that key, so as long as you don't change or delete the private key, you will keep the same address. In our case we got `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad`.
 
-Any metagrams that we receive will be saved as separate files under a `metagrams` dir, organized by the sender address.
+Any metagrams that we receive will be saved as separate files under a `metagrams/received` dir, organized by the sender address.
 
 #### Send a metagram
 
@@ -71,16 +77,16 @@ echo 'Does this even work?' | ./brbr send elzpbtfjdlygwlih3ukfqlya5gfdwaok43o356
 
 At the same time on the server receiving the metagram we would see a log message like this:
 ```
-2021/08/24 14:27:11 Received metagram 796c465f-a5c1-4175-930f-391598788570 from qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad (size 132 bytes), saving to metagrams/qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad/796c465f-a5c1-4175-930f-391598788570
+2021/08/24 14:27:11 Received metagram 796c465f-a5c1-4175-930f-391598788570 from qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad (size 132 bytes), saving to /home/me/.brbr/metagrams/received/qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad/796c465f-a5c1-4175-930f-391598788570
 ```
 
 #### Read received metagrams
 
-Received metagrams are organized on the file system under `metagrams`/`<sender_address>`/`<metagram_id>`
+Received metagrams are organized on the file system under `metagrams`/`received`/`<sender_address>`/`<metagram_id>`
 
 The one from the above example has been saved on the receiving server in
 ```
-metagrams/
+metagrams/received/
   qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad/
     796c465f-a5c1-4175-930f-391598788570
 ```
@@ -88,7 +94,7 @@ where `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad` is the sender a
 
 This is what is looks like:
 ```
-$ cat metagrams/qkhe6ph6hq4zrdc3fkg53jcshqk3bqbq23pgeulipgonfzsqnlediqad/796c465f-a5c1-4175-930f-391598788570
+$ cat ~/.brbr/metagrams/received/qkhe6ph6hq4zrdc3fkg53jcshqk3bqbq23pgeulipgonfzsqnlediqad/796c465f-a5c1-4175-930f-391598788570
 ID: 796c465f-a5c1-4175-930f-391598788570
 Created_at: 2021-08-24 14:27:10.671079837 +0000 UTC
 From: qkhe6ph6hq4zrdc3fkg53jcshqk3bqbq23pgeulipgonfzsqnlediqad

@@ -19,7 +19,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func Send(rcptAddr string) {
+func Send(dataDir, rcptAddr string) {
 	var rcptId, msg string
 
 	if strings.HasSuffix(rcptAddr, ".onion") {
@@ -32,8 +32,8 @@ func Send(rcptAddr string) {
 
 	// try to determine our address
 	from := "anonymous"
-	if _, err := os.Stat("address"); err == nil {
-		data, err := ioutil.ReadFile("address")
+	if _, err := os.Stat(dataDir + "/address"); err == nil {
+		data, err := ioutil.ReadFile(dataDir + "/address")
 		if err == nil {
 			from = strings.TrimSpace(string(data))
 		}
@@ -62,7 +62,7 @@ func Send(rcptAddr string) {
 
 	// use embedded tor (only on linux)
 	t, err := tor.Start(ctx, &tor.StartConf{
-		DataDir:                "/tmp/.tordata-client",
+		DataDir:                dataDir + "/.tordata-client",
 		ProcessCreator:         libtor.Creator,
 		UseEmbeddedControlConn: true,
 		RetainTempDataDir:      true,

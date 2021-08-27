@@ -30,7 +30,8 @@ const (
 
 // messengerServer is used to implement pb.MessengerServer
 type messengerServer struct {
-	ID string
+	ID      string
+	RecvDir string
 	pb.UnimplementedMessengerServer
 }
 
@@ -38,8 +39,8 @@ type messengerServer struct {
 func (s *messengerServer) SendMetagram(ctx context.Context, in *pb.Metagram) (*pb.Metagram, error) {
 	response := "OK"
 
-	// write to disk
-	path := fmt.Sprintf("%s/%s", metagramsDir, in.GetFrom())
+	// write to disk (organized by the from address)
+	path := fmt.Sprintf("%s/%s", s.RecvDir, in.GetFrom())
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err := os.Mkdir(path, 0700)
 		if err != nil {
@@ -65,21 +66,28 @@ func (s *messengerServer) SendMetagram(ctx context.Context, in *pb.Metagram) (*p
 	}, nil
 }
 
-func Start() {
-	key, err := loadKey()
+func Start(dataDir string) {
+	if dataDir == "" {
+		dataDir = "."
+	}
+
+	key, err := loadKey(dataDir)
 	if err != nil {
 		log.Fatalf("failed to load key: %v", err)
 	}
 
 	// create metagram output dir
-	if _, err := os.Stat(metagramsDir); os.IsNotExist(err) {
-		log.Printf("Creating output directory %s", metagramsDir)
-		err := os.Mkdir(metagramsDir, 0700)
-		if err != nil {
-			log.Fatalf("failed to create metagram dir: %v", err)
+	metagramsPath := dataDir + "/" + metagramsDir
+	if _, err := os.Stat(metagramsPath); os.IsNotExist(err) {
+		log.Printf("Creating metagrams output directory %s", metagramsPath)
+		if err := os.Mkdir(metagramsPath, 0700); err != nil {
+			log.Fatalf("failed to create metagrams dir: %v", err)
+		}
+		if err := os.Mkdir(metagramsPath+"/"+"received", 0700); err != nil {
+			log.Fatalf("failed to create metagrams received dir: %v", err)
 		}
 	}
-	log.Printf("All received metagrams will be saved in %s/", metagramsDir)
+	log.Printf("All received metagrams will be saved in %s/received", metagramsPath)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -88,7 +96,7 @@ func Start() {
 
 	// use embedded tor
 	t, err := tor.Start(ctx, &tor.StartConf{
-		DataDir:                "/tmp/.tordata-server",
+		DataDir:                dataDir + "/.tordata-server",
 		ProcessCreator:         libtor.Creator,
 		UseEmbeddedControlConn: true,
 		RetainTempDataDir:      true,
@@ -122,15 +130,18 @@ func Start() {
 		log.Fatalf("failed to start onion service: %v", err)
 	}
 
-	// workaround - write our address to a file so client can read it
-	if err := ioutil.WriteFile("address", []byte(onion.ID), 0600); err != nil {
+	// write our address to a file so client can read it when sending
+	if err := ioutil.WriteFile(dataDir+"/address", []byte(onion.ID), 0600); err != nil {
 		log.Printf("failed to save address: %v", err)
 	}
 
 	log.Printf("Onion service listening at %v", onion.ID)
 
 	grpc := grpc.NewServer()
-	pb.RegisterMessengerServer(grpc, &messengerServer{ID: onion.ID})
+	pb.RegisterMessengerServer(grpc, &messengerServer{
+		ID:      onion.ID,
+		RecvDir: metagramsPath + "/" + "received",
+	})
 
 	// setup signal handler
 	signalChan := make(chan os.Signal, 1)
@@ -194,12 +205,13 @@ func Stop() {
 	fmt.Printf("Stopped server process [%v]\n", pid)
 }
 
-func loadKey() ([]byte, error) {
+func loadKey(dataDir string) ([]byte, error) {
 	generateKey := false
 
 	log.Printf("Loading private key")
 
-	f, err := os.ReadFile(privateKeyFile)
+	privateKeyPath := dataDir + "/" + privateKeyFile
+	f, err := os.ReadFile(privateKeyPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			generateKey = true
@@ -217,7 +229,7 @@ func loadKey() ([]byte, error) {
 		}
 
 		// save to file
-		if err := os.WriteFile(privateKeyFile, []byte(hex.EncodeToString(key.PrivateKey())), 0600); err != nil {
+		if err := os.WriteFile(privateKeyPath, []byte(hex.EncodeToString(key.PrivateKey())), 0600); err != nil {
 			return nil, err
 		}
 

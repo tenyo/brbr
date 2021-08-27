@@ -11,7 +11,7 @@ var runCmd = &cobra.Command{
 	Long: `Start an onion server in the foreground to listen for incoming connections from 
 brbr senders, receive and save metagrams to local disk`,
 	Run: func(cmd *cobra.Command, args []string) {
-		brbrserver.Start()
+		brbrserver.Start(dataDir)
 	},
 }
 

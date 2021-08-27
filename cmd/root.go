@@ -8,7 +8,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	dataDir string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -25,7 +28,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initConfig, initDataDir)
 
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 
@@ -33,11 +36,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.brbr.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.brbr.json)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -52,14 +51,30 @@ func initConfig() {
 
 		// Search config in home directory with name ".brbr" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
+		viper.SetConfigType("json")
 		viper.SetConfigName(".brbr")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.SetEnvPrefix("brbr") // prefix environment variables with BRBR_
+	viper.AutomaticEnv()       // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+// initDataDir set the data dir and creates it if needed
+func initDataDir() {
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+	dataDir = home + "/.brbr"
+
+	if _, err := os.Stat(dataDir); os.IsNotExist(err) {
+		fmt.Fprintln(os.Stderr, "Creating data directory", dataDir)
+		err := os.Mkdir(dataDir, 0700)
+		cobra.CheckErr(err)
+	}
+
+	fmt.Fprintln(os.Stderr, "Using data dir:", dataDir)
 }
