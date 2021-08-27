@@ -13,4 +13,4 @@ release:
   name_template: "{{.ProjectName}}-v{{.Version}}"
 
 checksum:
-  name_template: "{{ .ProjectName }}_{{ .Version }}_linux_arm64_checksums.txt"
+  name_template: "{{ .ProjectName }}_{{ .Version }}_linux_arm64_checksum.txt"
