@@ -1,0 +1,13 @@
+builds:
+  -
+    id: arm64
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+    goarch:
+      - arm64
+
+release:
+  prerelease: auto
+  name_template: "{{.ProjectName}}-v{{.Version}}"

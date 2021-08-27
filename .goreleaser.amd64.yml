@@ -1,12 +1,12 @@
 builds:
   -
-    id: build-arm64
+    id: amd64
     env:
       - CGO_ENABLED=1
     goos:
       - linux
     goarch:
-      - arm64
+      - amd64
 
 release:
   prerelease: auto
