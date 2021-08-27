@@ -11,3 +11,6 @@ builds:
 release:
   prerelease: auto
   name_template: "{{.ProjectName}}-v{{.Version}}"
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_checksums.txt"
