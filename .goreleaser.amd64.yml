@@ -1,0 +1,16 @@
+builds:
+  -
+    id: amd64
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+release:
+  prerelease: auto
+  name_template: "{{.ProjectName}}-v{{.Version}}"
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_linux_amd64_checksum.txt"

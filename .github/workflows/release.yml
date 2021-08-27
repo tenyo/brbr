@@ -9,7 +9,17 @@ permissions:
 
 jobs:
   goreleaser:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ARM64]
+        include:
+          # specify the config file id to be executed for each different OS
+          - os: ubuntu-latest
+            build_id: "amd64"
+          - os: ARM64
+            build_id: "arm64"
+
+    runs-on: ${{ matrix.os }}
     steps:
       -
         name: Checkout
@@ -23,10 +33,10 @@ jobs:
           go-version: 1.17
       -
         name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@fix-platform-v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --rm-dist -f .goreleaser.${{ matrix.build_id }}.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
