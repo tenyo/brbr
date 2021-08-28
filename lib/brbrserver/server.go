@@ -159,7 +159,7 @@ func Start(dataDir string) {
 		log.Fatalf("failed to start grpc server: %v", err)
 	}
 
-	if err := os.Remove("address"); err != nil {
+	if err := os.Remove(dataDir + "/address"); err != nil {
 		fmt.Printf("failed to remove address file: %v\n", err)
 	}
 	log.Println("clean shutdown")
