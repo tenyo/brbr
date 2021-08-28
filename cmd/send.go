@@ -20,7 +20,7 @@ messages can be piped into this command.`,
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		brbrclient.Send(args[0])
+		brbrclient.Send(dataDir, args[0])
 	},
 }
 
