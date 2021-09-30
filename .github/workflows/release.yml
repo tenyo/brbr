@@ -11,13 +11,15 @@ jobs:
   goreleaser:
     strategy:
       matrix:
-        os: [ubuntu-latest, ARM64]
+        os: [ubuntu-latest, ARM64, ARM]
         include:
           # specify the config file id to be executed for each different OS
           - os: ubuntu-latest
             build_id: "amd64"
           - os: ARM64
             build_id: "arm64"
+          - os: ARM
+            build_id: "arm"
 
     runs-on: ${{ matrix.os }}
     steps:
