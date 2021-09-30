@@ -35,8 +35,8 @@ jobs:
           go-version: 1.17
         if: ${{ matrix.os != 'ARM' }}
       -
-        name: Install Go for ARM
-        run: "echo /usr/local/go/bin >> $GITHUB_PATH; rm -rf /usr/local/go && mkdir -p /usr/local/go && curl -s -L https://golang.org/dl/go1.17.linux-armv6l.tar.gz | tar -C /usr/local -xz"
+        name: Manually install Go for ARM
+        run: "echo $HOME/go; rm -rf $HOME/go && mkdir -p $HOME/go && curl -s -L https://golang.org/dl/go1.17.linux-armv6l.tar.gz | tar -C $HOME -xz; export PATH=$PATH:$HOME/go/bin"
         if: ${{ matrix.os == 'ARM' }}
       -
         name: Run GoReleaser
