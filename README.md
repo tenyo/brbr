@@ -6,6 +6,8 @@ Currently brbr only works on Linux - it has a built-in Tor server (thanks to htt
 
 Download the latest release from https://github.com/tenyo/brbr/releases/latest
 
+For Raspberry Pi 4 you can use the `arm64` release, and for Pi 3 (32-bit) - the `armv6` one.
+
 ## Usage
 
 ### Quickstart
