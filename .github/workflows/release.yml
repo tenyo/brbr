@@ -46,6 +46,6 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist -f .goreleaser.${{ matrix.build_id }}.yml
+          args: release --timeout 60m --rm-dist -f .goreleaser.${{ matrix.build_id }}.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
