@@ -20,10 +20,11 @@ messages can be piped into this command.`,
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		brbrclient.Send(dataDir, args[0])
+		brbrclient.Send(dataDir, args[0], connTimeout)
 	},
 }
 
 func init() {
+	sendCmd.Flags().IntVarP(&connTimeout, "timeout", "t", 60, "Specify connection timeout in seconds")
 	rootCmd.AddCommand(sendCmd)
 }

@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	cfgFile string
-	dataDir string
+	cfgFile     string
+	dataDir     string
+	connTimeout int
 )
 
 // rootCmd represents the base command when called without any subcommands

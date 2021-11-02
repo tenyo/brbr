@@ -19,7 +19,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func Send(dataDir, rcptAddr string) {
+func Send(dataDir, rcptAddr string, timeout int) {
 	var rcptId, msg string
 
 	if strings.HasSuffix(rcptAddr, ".onion") {
@@ -57,7 +57,9 @@ func Send(dataDir, rcptAddr string) {
 
 	msg = strings.Join(msgLines, "\n")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	connTimeout := time.Duration(timeout) * time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
 	defer cancel()
 
 	// use embedded tor (only on linux)
@@ -80,7 +82,7 @@ func Send(dataDir, rcptAddr string) {
 	//}
 	//defer t.Close()
 
-	log.Printf("Connecting to onion service %s", rcptAddr)
+	log.Printf("Connecting to onion service %s (timeout: %s)", rcptAddr, connTimeout)
 
 	dialer, err := t.Dialer(ctx, nil)
 	if err != nil {
