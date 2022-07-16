@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/tenyo/brbr)](https://goreportcard.com/report/tenyo/brbr)
+
 # brbr
 
 `brbr` is a simple command line tool for sending and receiving messages (here called metagrams) over the Tor network. When sending a metagram to another brbr instance, it establishes an anonymous encrypted connection (as v3 onion hidden service). It works behind firewall/NAT without requiring any port opening/forwarding.
@@ -94,7 +96,7 @@ metagrams/received/
 ```
 where `qkhe5ph6hq4zrdb3fkg53jcshqk3bq2q23pgeulipgoofzsqnlediqad` is the sender address and `796c465f-a5c1-4175-930f-391598788570` is the id of the metagram.
 
-This is what is looks like:
+This is what it looks like:
 ```
 $ cat ~/.brbr/metagrams/received/qkhe6ph6hq4zrdc3fkg53jcshqk3bqbq23pgeulipgonfzsqnlediqad/796c465f-a5c1-4175-930f-391598788570
 ID: 796c465f-a5c1-4175-930f-391598788570
